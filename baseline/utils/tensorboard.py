@@ -14,10 +14,11 @@ class TensorBoard(object):
 
         if type(img) == str:
             img = PIL.Image.open(img)
-        elif type(img) == PIL.Image.Image:
+        elif type(img) == PIL.Image:
             pass
         else:
-            img = scipy.misc.toimage(img)
+            # img = scipy.misc.toimage(img)
+            img = Image.fromarray(img, mode='RGB')
 
         img.save(bio, format="png")
         image_summary = Summary.Image(encoded_image_string=bio.getvalue())
