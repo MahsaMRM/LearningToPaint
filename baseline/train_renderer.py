@@ -37,7 +37,7 @@ def load_weights():
 
 
 # load_weights()
-while step < 500000:
+while step < 1000:
     net.train()
     train_batch = []
     ground_truth = []
