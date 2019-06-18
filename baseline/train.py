@@ -7,11 +7,13 @@ from DRL.evaluator import Evaluator
 from utils.util import *
 from utils.tensorboard import TensorBoard
 import time
+from os.path import join
 
 exp = os.path.abspath('.').split('/')[-1]
-writer = TensorBoard('../train_log/{}'.format(exp))
+# writer = TensorBoard('{}/train_log/{}'.format(args.output,exp))
 os.system('ln -sf ../train_log/{} ./log'.format(exp))
-os.system('mkdir ./model')
+# os.system('mkdir ./model')
+print(exp)
 
 def train(agent, env, evaluate):
     train_times = args.train_times
@@ -105,10 +107,18 @@ if __name__ == "__main__":
     torch.backends.cudnn.benchmark = True
     from DRL.ddpg import DDPG
     from DRL.multi import fastenv
+
+    writer = TensorBoard('{}/train_log/{}'.format(args.output, exp))
+    
+    model_output = os.path.join(args.output, 'model')
+    if not os.path.exists(model_output):
+        os.makedirs(model_output)
+
+    print(model_output)
     fenv = fastenv(args.max_step, args.env_batch, writer)
     agent = DDPG(args.batch_size, args.env_batch, args.max_step, \
                  args.tau, args.discount, args.rmsize, \
-                 writer, args.resume, args.output)
+                 writer, args.resume, model_output)
     evaluate = Evaluator(args, writer)
     print('observation_space', fenv.observation_space, 'action_space', fenv.action_space)
     train(agent, fenv, evaluate)
