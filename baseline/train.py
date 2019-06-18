@@ -13,9 +13,10 @@ exp = os.path.abspath('.').split('/')[-1]
 # writer = TensorBoard('{}/train_log/{}'.format(args.output,exp))
 os.system('ln -sf ../train_log/{} ./log'.format(exp))
 # os.system('mkdir ./model')
-print(exp)
+
 
 def train(agent, env, evaluate):
+    
     train_times = args.train_times
     env_batch = args.env_batch
     validate_interval = args.validate_interval
@@ -23,7 +24,10 @@ def train(agent, env, evaluate):
     debug = args.debug
     episode_train_times = args.episode_train_times
     resume = args.resume
-    output = args.output
+
+    output = model_output
+    print('model_dir: ', output)
+
     time_stamp = time.time()
     step = episode = episode_steps = 0
     tot_reward = 0.
@@ -93,7 +97,7 @@ if __name__ == "__main__":
     parser.add_argument('--train_times', default=2000000, type=int, help='total traintimes')
     parser.add_argument('--episode_train_times', default=10, type=int, help='train times for each episode')    
     parser.add_argument('--resume', default=None, type=str, help='Resuming model path for testing')
-    parser.add_argument('--output', default='./model', type=str, help='Resuming model path for testing')
+    parser.add_argument('--output', default=None, type=str, help='Resuming model path for testing')
     parser.add_argument('--debug', dest='debug', action='store_true', help='print some info')
     parser.add_argument('--seed', default=1234, type=int, help='random seed')
     
@@ -108,13 +112,13 @@ if __name__ == "__main__":
     from DRL.ddpg import DDPG
     from DRL.multi import fastenv
 
-    writer = TensorBoard('{}/train_log/{}'.format(args.output, exp))
-    
+    writer = TensorBoard('{}/train_log/{}'.format(args.output, exp))    
+    print('log_dir: ', '{}/train_log/{}'.format(args.output, exp))
+
     model_output = os.path.join(args.output, 'model')
     if not os.path.exists(model_output):
         os.makedirs(model_output)
 
-    print(model_output)
     fenv = fastenv(args.max_step, args.env_batch, writer)
     agent = DDPG(args.batch_size, args.env_batch, args.max_step, \
                  args.tau, args.discount, args.rmsize, \
